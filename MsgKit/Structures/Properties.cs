@@ -1,4 +1,4 @@
-﻿//
+//
 // Properties.cs
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
@@ -469,11 +469,11 @@ namespace MsgKit.Structures
                             break;
 
                         case TypeCode.SByte:
-                            data = BitConverter.GetBytes((sbyte)obj);
+                            data = BitConverter.GetBytes((short)obj);
                             break;
 
                         case TypeCode.Byte:
-                            data = BitConverter.GetBytes((byte)obj);
+                            data = BitConverter.GetBytes((ushort)obj);
                             break;
                         case TypeCode.Int16:
                             data = BitConverter.GetBytes((short)obj);

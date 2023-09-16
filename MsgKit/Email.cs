@@ -458,7 +458,7 @@ namespace MsgKit
             if (MessageEditorFormat != MessageEditorFormat.EDITOR_FORMAT_DONTKNOW)
                 TopLevelProperties.AddProperty(PropertyTags.PR_MSG_EDITOR_FORMAT, MessageEditorFormat);
 
-            if (ReceivedOn.HasValue)
+            if (ReceivedOn.HasValue && ReceivedOn > DateTime.MinValue)
                 TopLevelProperties.AddProperty(PropertyTags.PR_MESSAGE_DELIVERY_TIME, ReceivedOn.Value.ToUniversalTime());
 
             if (SentOn.HasValue && SentOn > DateTime.MinValue)

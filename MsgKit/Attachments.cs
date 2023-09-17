@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -233,6 +234,9 @@ namespace MsgKit
     /// </summary>
     public class Attachment
     {
+        private static readonly ILog Log = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         #region Fields
         private readonly FileInfo _file;
         #endregion
@@ -328,7 +332,7 @@ namespace MsgKit
             IsContactPhoto = isContactPhoto;
 
             if (isInline && string.IsNullOrWhiteSpace(contentId))
-                throw new ArgumentNullException(nameof(contentId), "The content id cannot be empty when isInline is set to true");
+                Log.Warn("The content id cannot be empty when isInline is set to true: " + fileName);
         }
 
         /// <summary>
@@ -361,6 +365,9 @@ namespace MsgKit
             IsInline = isInline;
             ContentId = contentId;
             IsContactPhoto = isContactPhoto;
+
+            if (isInline && string.IsNullOrWhiteSpace(contentId))
+                Log.Warn("The content id cannot be empty when isInline is set to true: " + file.FullName);
         }
         #endregion
 

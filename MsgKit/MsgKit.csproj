@@ -53,6 +53,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Common.Logging" Version="3.4.1" />
+    <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
     <PackageReference Include="MimeKit" Version="4.1.0" />
     <PackageReference Include="OpenMcdf" Version="2.3.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />

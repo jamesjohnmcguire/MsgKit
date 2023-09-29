@@ -194,14 +194,18 @@ namespace MsgKit
         internal void Save(string fileName)
         {
             Save();
-            CompoundFile.Save(fileName);
-        }
+#if NET7_0_OR_GREATER
+            CompoundFile.SaveAs(fileName);
+#else
+			CompoundFile.Save(fileName);
+#endif
+		}
 
-        /// <summary>
-        ///     Saves the message to the given <paramref name="stream" />
-        /// </summary>
-        /// <param name="stream"></param>
-        internal void Save(Stream stream)
+		/// <summary>
+		///     Saves the message to the given <paramref name="stream" />
+		/// </summary>
+		/// <param name="stream"></param>
+		internal void Save(Stream stream)
         {
             Save();
             CompoundFile.Save(stream);

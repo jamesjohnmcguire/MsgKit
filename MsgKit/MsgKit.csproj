@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.0;net5.0;net6.0;net7.0-windows</TargetFrameworks>
-    <Version>2.5.4</Version>
+    <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
+    <Version>2.6.1</Version>
     <Description>MsgKit is a 100% managed C# .NET library (no PINVOKE or whatsoever) which may be used for the creation of messages (E-Mail, Appointments, Journals and Stickey Notes) that are Outlook compatible</Description>
     <Authors>Kees van Spelde</Authors>
     <Company>Kees van Spelde</Company>
@@ -15,11 +15,11 @@
     <PackageTags>Outlook MSG E-mail Appointment</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReleaseNotes>- Updated nuget packages
-- Updated RTF encapsulator to better support multi bytes charsets</PackageReleaseNotes>
+- Merged pull requests</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>MsgKit.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>2.5.4.0</AssemblyVersion>
-    <FileVersion>2.5.4.0</FileVersion>
+    <AssemblyVersion>2.6.1.0</AssemblyVersion>
+    <FileVersion>2.6.1.0</FileVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Outlook-icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <DocumentationFile>bin\$(Configuration)\MsgKit.xml</DocumentationFile>
   </PropertyGroup>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462'">
     <PackageReference Include="MimeKit" Version="2.10.1" />
     <PackageReference Include="OpenMcdf" Version="2.2.1.9" />
@@ -55,7 +55,7 @@
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
-    <PackageReference Include="MimeKit" Version="4.1.0" />
+    <PackageReference Include="MimeKit" Version="4.2.0" />
     <PackageReference Include="OpenMcdf" Version="2.3.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
@@ -70,5 +70,5 @@
 			<PackagePath></PackagePath>
 		</None>
 	</ItemGroup>
-  
+
 </Project>

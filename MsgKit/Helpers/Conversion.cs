@@ -1,5 +1,5 @@
 ﻿//
-// ContactYomi.cs
+// Conversion.cs
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
@@ -24,29 +24,52 @@
 // THE SOFTWARE.
 //
 
-// ReSharper disable UnusedAutoPropertyAccessor.Global
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
-namespace MsgKit;
+namespace MsgKit.Helpers;
 
 /// <summary>
-///     Placeholder for a <see cref="Contact"/> other address
+///     This class contains conversion related helper methods
 /// </summary>
-public class ContactYomi
+internal static class Conversion
 {
-    #region Properties
+    #region ObjectToByteArray
     /// <summary>
-    ///     The first name
+    ///     Converts an object to an byte array
     /// </summary>
-    public string FirstName { get; set; }
+    /// <param name="obj">The object to convert</param>
+    /// <returns></returns>
+    public static byte[] ObjectToByteArray(Object obj)
+    {
+        if (obj == null)
+            return null;
 
-    /// <summary>
-    ///     The last name
-    /// </summary>
-    public string LastName { get; set; }
+        var binaryFormatter = new BinaryFormatter();
+        using (var memoryStream = new MemoryStream())
+        {
+            binaryFormatter.Serialize(memoryStream, obj);
+            return memoryStream.ToArray();
+        }
+    }
+    #endregion
 
+    #region ByteArrayToObject
     /// <summary>
-    ///     The company name
+    ///     Converts a byte array to an Object
     /// </summary>
-    public string CompanyName { get; set; }
+    /// <param name="array">The byte array</param>
+    /// <returns></returns>
+    public static Object ByteArrayToObject(byte[] array)
+    {
+        using (var memmoryStream = new MemoryStream())
+        {
+            var binaryFormatter = new BinaryFormatter();
+            memmoryStream.Write(array, 0, array.Length);
+            memmoryStream.Seek(0, SeekOrigin.Begin);
+            return binaryFormatter.Deserialize(memmoryStream);
+        }
+    }
     #endregion
 }

@@ -193,8 +193,12 @@ public class Message : IDisposable
     /// <param name="fileName"></param>
     internal void Save(string fileName)
     {
-        Save();
-        CompoundFile.SaveAs(fileName);
+#if NET7_0_OR_GREATER
+            CompoundFile.SaveAs(fileName);
+#else
+		CompoundFile.Save(fileName);
+#endif
+		CompoundFile.SaveAs(fileName);
     }
 
     /// <summary>

@@ -78,6 +78,12 @@ public class Email : Message, IDisposable
     ///     The subject of the E-mail
     /// </summary>
     private string _subject;
+
+    /// <summary>
+    ///     When set to &lt;c&gt;true&lt;/c&gt; then the &lt;see cref="Attachment.Stream"/&gt;'s
+    ///     will not be disposed when calling the &lt;see cref="Dispose"/&gt; method. Default set to &lt;c&gt;false&lt;/c&gt;
+    /// </summary>
+    private readonly bool _leaveAttachmentStreamsOpen;
     #endregion
 
     #region Properties
@@ -121,8 +127,8 @@ public class Email : Message, IDisposable
     /// </summary>
     /// <remarks>
     ///     These properties are examples of the address properties for the messaging user who is being represented by the
-    ///     <see cref="Receiving" /> user. They must be set by the incoming transport provider, which is also responsible for 
-    ///     authorization or verification of the delegate. If no messaging user is being represented, these properties should 
+    ///     <see cref="Receiving" /> user. They must be set by the incoming transport provider, which is also responsible for
+    ///     authorization or verification of the delegate. If no messaging user is being represented, these properties should
     ///     be set to the e-mail address contained in the PR_RECEIVED_BY_EMAIL_ADDRESS (PidTagReceivedByEmailAddress) property.
     /// </remarks>
     public ReceivingRepresenting ReceivingRepresenting { get; internal set; }
@@ -189,11 +195,11 @@ public class Email : Message, IDisposable
     public Attachments Attachments => _attachments ??= new Attachments();
 
     /// <summary>
-    ///     Returns or sets the UTC date and time the <see cref="Sender"/> has submitted the 
+    ///     Returns or sets the UTC date and time the <see cref="Sender"/> has submitted the
     ///     <see cref="Message"/>
     /// </summary>
     /// <remarks>
-    ///     This property has to be set to UTC datetime. When not set then the current date 
+    ///     This property has to be set to UTC datetime. When not set then the current date
     ///     and time is used
     /// </remarks>
     public DateTime? SentOn { get; set; }
@@ -236,7 +242,7 @@ public class Email : Message, IDisposable
 
     /// <summary>
     ///     Sets or returns the <see cref="TransportMessageHeaders"/> property as a string (text).
-    ///     This property expects the headers as a string 
+    ///     This property expects the headers as a string
     /// </summary>
     public string TransportMessageHeadersText
     {
@@ -253,7 +259,7 @@ public class Email : Message, IDisposable
     ///     Use the <see cref="TransportMessageHeaders"/> property if you want to set
     ///     the headers directly from a string otherwise see the example code below.
     /// </remarks>
-    /// <example> 
+    /// <example>
     ///     <code>
     ///     var email = new Email();
     ///     email.TransportMessageHeaders = new MessageHeader();
@@ -274,7 +280,7 @@ public class Email : Message, IDisposable
     public bool ReadRecipient { get; }
 
     /// <summary>
-    ///     Specifies the format for an editor to use to display a message.   
+    ///     Specifies the format for an editor to use to display a message.
     /// </summary>
     public MessageEditorFormat MessageEditorFormat { get; set; }
     #endregion
@@ -287,10 +293,13 @@ public class Email : Message, IDisposable
     /// <param name="subject">The subject of the E-mail</param>
     /// <param name="draft">Set to <c>true</c> to save the E-mail as a draft message</param>
     /// <param name="readReceipt">Set to <c>true</c> to request a read receipt for the E-mail</param>
+    /// <param name="leaveAttachmentStreamsOpen">When set to <c>true</c> then the <see cref="Attachment.Stream"/>'s
+    /// will not be disposed when calling the <see cref="Dispose"/> method. Default set to <c>false</c></param>
     public Email(Sender sender,
         string subject,
         bool draft = false,
-        bool readReceipt = false)
+        bool readReceipt = false,
+        bool leaveAttachmentStreamsOpen = false)
     {
         Sender = sender;
         Subject = subject;
@@ -298,6 +307,7 @@ public class Email : Message, IDisposable
         IconIndex = MessageIconIndex.NewMail;
         Draft = draft;
         ReadRecipient = readReceipt;
+        _leaveAttachmentStreamsOpen = leaveAttachmentStreamsOpen;
     }
 
     /// <summary>
@@ -308,11 +318,14 @@ public class Email : Message, IDisposable
     /// <param name="subject">The subject of the E-mail</param>
     /// <param name="draft">Set to <c>true</c> to save the E-mail as a draft message</param>
     /// <param name="readReceipt">Set to <c>true</c> to request a read receipt for the E-mail</param>
+    /// <param name="leaveAttachmentStreamsOpen">When set to <c>true</c> then the <see cref="Attachment.Stream"/>'s
+    /// will not be disposed when calling the <see cref="Dispose"/> method. Default set to <c>false</c></param>
     public Email(Sender sender,
         Representing representing,
         string subject,
         bool draft = false,
-        bool readReceipt = false)
+        bool readReceipt = false,
+        bool leaveAttachmentStreamsOpen = false)
     {
         Sender = sender;
         Representing = representing;
@@ -321,25 +334,26 @@ public class Email : Message, IDisposable
         IconIndex = MessageIconIndex.NewMail;
         Draft = draft;
         ReadRecipient = readReceipt;
+        _leaveAttachmentStreamsOpen = leaveAttachmentStreamsOpen;
     }
     #endregion
 
     #region SetSubject
     /// <summary>
-    ///     These properties are computed by message store or transport providers from the PR_SUBJECT (PidTagSubject) 
-    ///     and PR_SUBJECT_PREFIX (PidTagSubjectPrefix) properties in the following manner. If the PR_SUBJECT_PREFIX 
-    ///     is present and is an initial substring of PR_SUBJECT, PR_NORMALIZED_SUBJECT and associated properties are 
-    ///     set to the contents of PR_SUBJECT with the prefix removed. If PR_SUBJECT_PREFIX is present, but it is not 
-    ///     an initial substring of PR_SUBJECT, PR_SUBJECT_PREFIX is deleted and recalculated from PR_SUBJECT using 
-    ///     the following rule: If the string contained in PR_SUBJECT begins with one to three non-numeric characters 
+    ///     These properties are computed by message store or transport providers from the PR_SUBJECT (PidTagSubject)
+    ///     and PR_SUBJECT_PREFIX (PidTagSubjectPrefix) properties in the following manner. If the PR_SUBJECT_PREFIX
+    ///     is present and is an initial substring of PR_SUBJECT, PR_NORMALIZED_SUBJECT and associated properties are
+    ///     set to the contents of PR_SUBJECT with the prefix removed. If PR_SUBJECT_PREFIX is present, but it is not
+    ///     an initial substring of PR_SUBJECT, PR_SUBJECT_PREFIX is deleted and recalculated from PR_SUBJECT using
+    ///     the following rule: If the string contained in PR_SUBJECT begins with one to three non-numeric characters
     ///     followed by a colon and a space, then the string together with the colon and the blank becomes the prefix.
-    ///     Numbers, blanks, and punctuation characters are not valid prefix characters. If PR_SUBJECT_PREFIX is not 
-    ///     present, it is calculated from PR_SUBJECT using the rule outlined in the previous step.This property then 
+    ///     Numbers, blanks, and punctuation characters are not valid prefix characters. If PR_SUBJECT_PREFIX is not
+    ///     present, it is calculated from PR_SUBJECT using the rule outlined in the previous step.This property then
     ///     is set to the contents of PR_SUBJECT with the prefix removed.
     /// </summary>
     /// <remarks>
-    ///     When PR_SUBJECT_PREFIX is an empty string, PR_SUBJECT and PR_NORMALIZED_SUBJECT are the same. Ultimately, 
-    ///     this property should be the part of PR_SUBJECT following the prefix. If there is no prefix, this property 
+    ///     When PR_SUBJECT_PREFIX is an empty string, PR_SUBJECT and PR_NORMALIZED_SUBJECT are the same. Ultimately,
+    ///     this property should be the part of PR_SUBJECT following the prefix. If there is no prefix, this property
     ///     becomes the same as PR_SUBJECT.
     /// </remarks>
     protected void SetSubject()
@@ -402,12 +416,9 @@ public class Email : Message, IDisposable
 
         TopLevelProperties.AddProperty(PropertyTags.PR_ENTRYID, Mapi.GenerateEntryId());
         TopLevelProperties.AddProperty(PropertyTags.PR_INSTANCE_KEY, Mapi.GenerateInstanceKey());
-        TopLevelProperties.AddProperty(PropertyTags.PR_STORE_SUPPORT_MASK, StoreSupportMaskConst.StoreSupportMask,
-            PropertyFlags.PROPATTR_READABLE);
-        TopLevelProperties.AddProperty(PropertyTags.PR_STORE_UNICODE_MASK, StoreSupportMaskConst.StoreSupportMask,
-            PropertyFlags.PROPATTR_READABLE);
-        TopLevelProperties.AddProperty(PropertyTags.PR_ALTERNATE_RECIPIENT_ALLOWED, true,
-            PropertyFlags.PROPATTR_READABLE);
+        TopLevelProperties.AddProperty(PropertyTags.PR_STORE_SUPPORT_MASK, StoreSupportMaskConst.StoreSupportMask, PropertyFlags.PROPATTR_READABLE);
+        TopLevelProperties.AddProperty(PropertyTags.PR_STORE_UNICODE_MASK, StoreSupportMaskConst.StoreSupportMask, PropertyFlags.PROPATTR_READABLE);
+        TopLevelProperties.AddProperty(PropertyTags.PR_ALTERNATE_RECIPIENT_ALLOWED, true, PropertyFlags.PROPATTR_READABLE);
         TopLevelProperties.AddProperty(PropertyTags.PR_HASATTACH, attachmentCount > 0);
 
         if (TransportMessageHeaders != null)
@@ -466,15 +477,15 @@ public class Email : Message, IDisposable
         if (MessageEditorFormat != MessageEditorFormat.EDITOR_FORMAT_DONTKNOW)
             TopLevelProperties.AddProperty(PropertyTags.PR_MSG_EDITOR_FORMAT, MessageEditorFormat);
 
-            if (ReceivedOn.HasValue && ReceivedOn > DateTime.MinValue)
-                TopLevelProperties.AddProperty(PropertyTags.PR_MESSAGE_DELIVERY_TIME, ReceivedOn.Value.ToUniversalTime());
+        if (ReceivedOn.HasValue && ReceivedOn > DateTime.MinValue)
+            TopLevelProperties.AddProperty(PropertyTags.PR_MESSAGE_DELIVERY_TIME, ReceivedOn.Value.ToUniversalTime());
 
-            if (SentOn.HasValue && SentOn > DateTime.MinValue)
-                TopLevelProperties.AddProperty(PropertyTags.PR_CLIENT_SUBMIT_TIME, SentOn.Value.ToUniversalTime());
+        if (SentOn.HasValue && SentOn > DateTime.MinValue)
+            TopLevelProperties.AddProperty(PropertyTags.PR_CLIENT_SUBMIT_TIME, SentOn.Value.ToUniversalTime());
 
-            TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS, MapiAccess.MAPI_ACCESS_DELETE | MapiAccess.MAPI_ACCESS_MODIFY | MapiAccess.MAPI_ACCESS_READ);
-            TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS_LEVEL, MapiAccess.MAPI_ACCESS_MODIFY);
-            TopLevelProperties.AddProperty(PropertyTags.PR_OBJECT_TYPE, MapiObjectType.MAPI_MESSAGE);
+        TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS, MapiAccess.MAPI_ACCESS_DELETE | MapiAccess.MAPI_ACCESS_MODIFY | MapiAccess.MAPI_ACCESS_READ);
+        TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS_LEVEL, MapiAccess.MAPI_ACCESS_MODIFY);
+        TopLevelProperties.AddProperty(PropertyTags.PR_OBJECT_TYPE, MapiObjectType.MAPI_MESSAGE);
 
         SetSubject();
         TopLevelProperties.AddProperty(PropertyTags.PR_SUBJECT_W, Subject);
@@ -601,8 +612,9 @@ public class Email : Message, IDisposable
     /// </summary>
     public new void Dispose()
     {
-        foreach (var attachment in _attachments)
-            attachment.Stream?.Dispose();
+        if (!_leaveAttachmentStreamsOpen)
+            foreach (var attachment in _attachments)
+                attachment.Stream?.Dispose();
 
         base.Dispose();
     }

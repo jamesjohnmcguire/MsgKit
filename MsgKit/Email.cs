@@ -350,228 +350,7 @@ public class Email : Message, IDisposable
             {
                 SubjectNormalized = Subject.Substring(SubjectPrefix.Length);
             }
-<<<<<<< HEAD
-        }
-
-        /// <summary>
-        ///     Returns the normalized subject of the E-mail
-        /// </summary>
-        public string SubjectNormalized { get; private set; }
-
-        /// <summary>
-        ///     Returns or sets the <see cref="Enums.MessagePriority"/>
-        /// </summary>
-        public MessagePriority Priority { get; set; }
-
-        /// <summary>
-        ///     Returns or sets the <see cref="Enums.MessageImportance"/>
-        /// </summary>
-        public MessageImportance Importance { get; set; }
-
-        /// <summary>
-        ///     Returns or sets the text body of the E-mail
-        /// </summary>
-        public string BodyText { get; set; }
-
-        /// <summary>
-        ///     Returns or sets the html body of the E-mail
-        /// </summary>
-        public string BodyHtml { get; set; }
-
-        /// <summary>
-        ///     The compressed RTF body part
-        /// </summary>
-        /// <remarks>
-        ///     When not set then the RTF is generated from <see cref="BodyHtml"/> (when this property is set)
-        /// </remarks>
-        public string BodyRtf { get; set; }
-
-        /// <summary>
-        ///     Returns or set to <c>true</c> when <see cref="BodyRtf"/> is compressed
-        /// </summary>
-        public bool BodyRtfCompressed { get; set; }
-
-        /// <summary>
-        ///     The E-mail <see cref="Attachments" />
-        /// </summary>
-        public Attachments Attachments => _attachments ?? (_attachments = new Attachments());
-
-        /// <summary>
-        ///     Returns or sets the UTC date and time the <see cref="Sender"/> has submitted the
-        ///     <see cref="Message"/>
-        /// </summary>
-        /// <remarks>
-        ///     This property has to be set to UTC datetime. When not set then the current date
-        ///     and time is used
-        /// </remarks>
-        public DateTime? SentOn { get; set; }
-
-        /// <summary>
-        ///     Returns the UTC date and time when the <see cref="Message"/> was received
-        /// </summary>
-        /// <remarks>
-        ///     This property has to be set to UTC datetime
-        /// </remarks>
-        public DateTime? ReceivedOn { get; set; }
-
-        /// <summary>
-        ///     Returns or sets the Internet Message Id
-        /// </summary>
-        /// <remarks>
-        ///     Corresponds to the message ID field as specified in [RFC2822].<br/><br/>
-        ///     If set then this value will be used, when not set the value will be read from the
-        ///     <see cref="TransportMessageHeaders"/> when this property is set
-        /// </remarks>
-        public string InternetMessageId { get; set; }
-
-        /// <summary>
-        ///     Returns or set the the value of a Multipurpose Internet Mail Extensions (MIME) message's References header field
-        /// </summary>
-        /// <remarks>
-        ///     If set then this value will be used, when not set the value will be read from the
-        ///     <see cref="TransportMessageHeaders"/> when this property is set
-        /// </remarks>
-        public string InternetReferences { get; set; }
-
-        /// <summary>
-        ///     Returns or sets the original message's PR_INTERNET_MESSAGE_ID (PidTagInternetMessageId) property value
-        /// </summary>
-        /// <remarks>
-        ///     If set then this value will be used, when not set the value will be read from the
-        ///     <see cref="TransportMessageHeaders"/> when this property is set
-        /// </remarks>
-        public string InReplyToId { get; set; }
-
-        /// <summary>
-        ///     Sets or returns the <see cref="TransportMessageHeaders"/> property as a string (text).
-        ///     This property expects the headers as a string
-        /// </summary>
-        public string TransportMessageHeadersText
-        {
-            set => TransportMessageHeaders = HeaderExtractor.GetHeaders(value);
-            get => TransportMessageHeaders != null ? TransportMessageHeaders.ToString() : string.Empty;
-        }
-
-        /// <summary>
-        ///     Returns or sets the transport message headers. These are only present when
-        ///     the message has been sent outside an Exchange environment to another mailserver
-        ///     <c>null</c> will be returned when not present
-        /// </summary>
-        /// <remarks>
-        ///     Use the <see cref="TransportMessageHeaders"/> property if you want to set
-        ///     the headers directly from a string otherwise see the example code below.
-        /// </remarks>
-        /// <example>
-        ///     <code>
-        ///     var email = new Email();
-        ///     email.TransportMessageHeaders = new MessageHeader();
-        ///     // ... do something with it, for example
-        ///     email.TransportMessageHeaders.SetHeaderValue("X-MY-CUSTOM-HEADER", "EXAMPLE VALUE");
-        ///     </code>
-        /// </example>
-        public MessageHeader TransportMessageHeaders { get; set; }
-
-        /// <summary>
-        ///     Returns <c>true</c> when the message is set as a draft message
-        /// </summary>
-        public bool Draft { get; }
-
-        /// <summary>
-        ///     Returns <c>true</c> when a read receipt is requested
-        /// </summary>
-        public bool ReadRecipient { get; }
-
-        /// <summary>
-        ///     Specifies the format for an editor to use to display a message.
-        /// </summary>
-        public MessageEditorFormat MessageEditorFormat { get; set; }
-        #endregion
-
-        #region Constructor
-        /// <summary>
-        ///     Creates this object and sets all the needed properties
-        /// </summary>
-        /// <param name="sender">The <see cref="Sender"/> of the E-mail</param>
-        /// <param name="subject">The subject of the E-mail</param>
-        /// <param name="draft">Set to <c>true</c> to save the E-mail as a draft message</param>
-        /// <param name="readReceipt">Set to <c>true</c> to request a read receipt for the E-mail</param>
-        public Email(Sender sender,
-                     string subject,
-                     bool draft = false,
-                     bool readReceipt = false)
-        {
-            Sender = sender;
-            Subject = subject;
-            Importance = MessageImportance.IMPORTANCE_NORMAL;
-            IconIndex = MessageIconIndex.NewMail;
-            Draft = draft;
-            ReadRecipient = readReceipt;
-        }
-
-        /// <summary>
-        ///     Creates this object and sets all the needed properties
-        /// </summary>
-        /// <param name="sender">The <see cref="Sender"/> of the E-mail</param>
-        /// <param name="representing">The <see cref="MsgKit.Representing"/> sender of the E-mail</param>
-        /// <param name="subject">The subject of the E-mail</param>
-        /// <param name="draft">Set to <c>true</c> to save the E-mail as a draft message</param>
-        /// <param name="readReceipt">Set to <c>true</c> to request a read receipt for the E-mail</param>
-        public Email(Sender sender,
-                     Representing representing,
-                     string subject,
-                     bool draft = false,
-                     bool readReceipt = false)
-        {
-            Sender = sender;
-            Representing = representing;
-            Subject = subject;
-            Importance = MessageImportance.IMPORTANCE_NORMAL;
-            IconIndex = MessageIconIndex.NewMail;
-            Draft = draft;
-            ReadRecipient = readReceipt;
-        }
-        #endregion
-
-        #region SetSubject
-        /// <summary>
-        ///     These properties are computed by message store or transport providers from the PR_SUBJECT (PidTagSubject)
-        ///     and PR_SUBJECT_PREFIX (PidTagSubjectPrefix) properties in the following manner. If the PR_SUBJECT_PREFIX
-        ///     is present and is an initial substring of PR_SUBJECT, PR_NORMALIZED_SUBJECT and associated properties are
-        ///     set to the contents of PR_SUBJECT with the prefix removed. If PR_SUBJECT_PREFIX is present, but it is not
-        ///     an initial substring of PR_SUBJECT, PR_SUBJECT_PREFIX is deleted and recalculated from PR_SUBJECT using
-        ///     the following rule: If the string contained in PR_SUBJECT begins with one to three non-numeric characters
-        ///     followed by a colon and a space, then the string together with the colon and the blank becomes the prefix.
-        ///     Numbers, blanks, and punctuation characters are not valid prefix characters. If PR_SUBJECT_PREFIX is not
-        ///     present, it is calculated from PR_SUBJECT using the rule outlined in the previous step.This property then
-        ///     is set to the contents of PR_SUBJECT with the prefix removed.
-        /// </summary>
-        /// <remarks>
-        ///     When PR_SUBJECT_PREFIX is an empty string, PR_SUBJECT and PR_NORMALIZED_SUBJECT are the same. Ultimately,
-        ///     this property should be the part of PR_SUBJECT following the prefix. If there is no prefix, this property
-        ///     becomes the same as PR_SUBJECT.
-        /// </remarks>
-        protected void SetSubject()
-        {
-            if (!string.IsNullOrEmpty(SubjectPrefix) && !string.IsNullOrEmpty(Subject))
-            {
-                if (Subject.StartsWith(SubjectPrefix))
-                {
-                    SubjectNormalized = Subject.Substring(SubjectPrefix.Length);
-                }
-                else
-                {
-                    var matches = SubjectPrefixRegex.Matches(Subject);
-                    if (matches.Count > 0)
-                    {
-                        SubjectPrefix = matches.OfType<Match>().First().Groups[1].Value;
-                        SubjectNormalized = matches.OfType<Match>().First().Groups[2].Value;
-                    }
-                }
-            }
-            else if (!string.IsNullOrEmpty(Subject))
-=======
             else
->>>>>>> master
             {
                 var matches = SubjectPrefixRegex.Matches(Subject);
                 if (matches.Count > 0)
@@ -644,19 +423,10 @@ public class Email : Message, IDisposable
                 TopLevelProperties.AddProperty(PropertyTags.PR_INTERNET_REFERENCES_W,
                     TransportMessageHeaders.References.Last());
 
-<<<<<<< HEAD
-            var recipientCount = Recipients.Count;
-            var attachmentCount = Attachments.Count;
-            TopLevelProperties.RecipientCount = recipientCount;
-            TopLevelProperties.AttachmentCount = attachmentCount;
-            TopLevelProperties.NextRecipientId = recipientCount;
-            TopLevelProperties.NextAttachmentId = attachmentCount;
-=======
             if (TransportMessageHeaders.InReplyTo.Any())
                 TopLevelProperties.AddProperty(PropertyTags.PR_IN_REPLY_TO_ID_W,
                     TransportMessageHeaders.InReplyTo.Last());
         }
->>>>>>> master
 
         if (!string.IsNullOrWhiteSpace(InternetMessageId))
             TopLevelProperties.AddOrReplaceProperty(PropertyTags.PR_INTERNET_MESSAGE_ID_W, InternetMessageId);
@@ -696,43 +466,17 @@ public class Email : Message, IDisposable
         if (MessageEditorFormat != MessageEditorFormat.EDITOR_FORMAT_DONTKNOW)
             TopLevelProperties.AddProperty(PropertyTags.PR_MSG_EDITOR_FORMAT, MessageEditorFormat);
 
-<<<<<<< HEAD
-            TopLevelProperties.AddProperty(PropertyTags.PR_INTERNET_CPID, Encoding.UTF8.CodePage);
-
-            TopLevelProperties.AddProperty(PropertyTags.PR_BODY_W, BodyText);
-
-            if (!string.IsNullOrEmpty(BodyHtml) && !Draft)
-            {
-                TopLevelProperties.AddProperty(PropertyTags.PR_HTML, BodyHtml);
-                TopLevelProperties.AddProperty(PropertyTags.PR_RTF_IN_SYNC, false);
-            }
-            else if (string.IsNullOrWhiteSpace(BodyRtf) && !string.IsNullOrWhiteSpace(BodyHtml))
-            {
-                BodyRtf = Encapsulator.Encapsulate(BodyHtml);
-                BodyRtfCompressed = true;
-            }
-
-            if (!string.IsNullOrWhiteSpace(BodyRtf))
-            {
-                TopLevelProperties.AddProperty(PropertyTags.PR_RTF_COMPRESSED, new Rtf.Compressor().Compress(Encoding.ASCII.GetBytes(BodyRtf)));
-                TopLevelProperties.AddProperty(PropertyTags.PR_RTF_IN_SYNC, BodyRtfCompressed);
-            }
-
-            if (MessageEditorFormat != MessageEditorFormat.EDITOR_FORMAT_DONTKNOW)
-                TopLevelProperties.AddProperty(PropertyTags.PR_MSG_EDITOR_FORMAT, MessageEditorFormat);
-=======
         SentOn ??= DateTime.UtcNow;
->>>>>>> master
 
-            if (ReceivedOn.HasValue && ReceivedOn > DateTime.MinValue)
-                TopLevelProperties.AddProperty(PropertyTags.PR_MESSAGE_DELIVERY_TIME, ReceivedOn.Value.ToUniversalTime());
+        if (ReceivedOn.HasValue && ReceivedOn > DateTime.MinValue)
+            TopLevelProperties.AddProperty(PropertyTags.PR_MESSAGE_DELIVERY_TIME, ReceivedOn.Value.ToUniversalTime());
 
-            if (SentOn.HasValue && SentOn > DateTime.MinValue)
-                TopLevelProperties.AddProperty(PropertyTags.PR_CLIENT_SUBMIT_TIME, SentOn.Value.ToUniversalTime());
+        if (SentOn.HasValue && SentOn > DateTime.MinValue)
+            TopLevelProperties.AddProperty(PropertyTags.PR_CLIENT_SUBMIT_TIME, SentOn.Value.ToUniversalTime());
 
-            TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS, MapiAccess.MAPI_ACCESS_DELETE | MapiAccess.MAPI_ACCESS_MODIFY | MapiAccess.MAPI_ACCESS_READ);
-            TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS_LEVEL, MapiAccess.MAPI_ACCESS_MODIFY);
-            TopLevelProperties.AddProperty(PropertyTags.PR_OBJECT_TYPE, MapiObjectType.MAPI_MESSAGE);
+        TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS, MapiAccess.MAPI_ACCESS_DELETE | MapiAccess.MAPI_ACCESS_MODIFY | MapiAccess.MAPI_ACCESS_READ);
+        TopLevelProperties.AddProperty(PropertyTags.PR_ACCESS_LEVEL, MapiAccess.MAPI_ACCESS_MODIFY);
+        TopLevelProperties.AddProperty(PropertyTags.PR_OBJECT_TYPE, MapiObjectType.MAPI_MESSAGE);
 
         SetSubject();
         TopLevelProperties.AddProperty(PropertyTags.PR_SUBJECT_W, Subject);
@@ -784,40 +528,7 @@ public class Email : Message, IDisposable
 
             foreach (var recipient in Recipients)
             {
-<<<<<<< HEAD
-                messageFlags |= MessageFlags.MSGFLAG_UNSENT;
-
-                // Only set the IconIndex when it is not changed from NewEmail to something else
-                if (IconIndex == MessageIconIndex.NewMail)
-                    IconIndex = MessageIconIndex.UnsentMail;
-            }
-
-            if (ReadRecipient)
-            {
-                TopLevelProperties.AddProperty(PropertyTags.PR_READ_RECEIPT_REQUESTED, true);
-                var reportTag = new ReportTag {ANSIText = Subject};
-                TopLevelProperties.AddProperty(PropertyTags.PR_REPORT_TAG, reportTag.ToByteArray());
-
-            }
-
-            TopLevelProperties.AddProperty(PropertyTags.PR_MESSAGE_FLAGS, messageFlags);
-            TopLevelProperties.AddProperty(PropertyTags.PR_ICON_INDEX, IconIndex);
-
-            Sender?.WriteProperties(TopLevelProperties);
-            Receiving?.WriteProperties(TopLevelProperties);
-            Representing?.WriteProperties(TopLevelProperties);
-            ReceivingRepresenting?.WriteProperties(TopLevelProperties);
-
-            if (recipientCount > 0)
-            {
-                var displayTo = new List<string>();
-                var displayCc = new List<string>();
-                var displayBcc = new List<string>();
-
-                foreach (var recipient in Recipients)
-=======
                 switch (recipient.RecipientType)
->>>>>>> master
                 {
                     case RecipientType.To:
                         if (!string.IsNullOrWhiteSpace(recipient.DisplayName))
@@ -843,21 +554,6 @@ public class Email : Message, IDisposable
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-<<<<<<< HEAD
-
-                var replyToRecipients = new List<string>();
-
-                foreach (var recipient in ReplyToRecipients)
-                {
-                    replyToRecipients.Add(recipient.Email);
-                }
-
-                TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_TO_W, string.Join(";", displayTo), PropertyFlags.PROPATTR_READABLE);
-                TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_CC_W, string.Join(";", displayCc), PropertyFlags.PROPATTR_READABLE);
-                TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_BCC_W, string.Join(";", displayBcc), PropertyFlags.PROPATTR_READABLE);
-                TopLevelProperties.AddProperty(PropertyTags.PR_REPLY_RECIPIENT_NAMES_W, string.Join(";", replyToRecipients), PropertyFlags.PROPATTR_READABLE);
-=======
->>>>>>> master
             }
 
             var replyToRecipients = new List<string>();
@@ -867,19 +563,12 @@ public class Email : Message, IDisposable
                 replyToRecipients.Add(recipient.Email);
             }
 
-            TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_TO_W, string.Join(";", displayTo),
-                PropertyFlags.PROPATTR_READABLE);
-            TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_CC_W, string.Join(";", displayCc),
-                PropertyFlags.PROPATTR_READABLE);
-            TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_BCC_W, string.Join(";", displayBcc),
-                PropertyFlags.PROPATTR_READABLE);
-            TopLevelProperties.AddProperty(PropertyTags.PR_REPLY_RECIPIENT_NAMES_W,
-                string.Join(";", replyToRecipients), PropertyFlags.PROPATTR_READABLE);
+            TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_TO_W, string.Join(";", displayTo), PropertyFlags.PROPATTR_READABLE);
+            TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_CC_W, string.Join(";", displayCc), PropertyFlags.PROPATTR_READABLE);
+            TopLevelProperties.AddProperty(PropertyTags.PR_DISPLAY_BCC_W, string.Join(";", displayBcc), PropertyFlags.PROPATTR_READABLE);
+            TopLevelProperties.AddProperty(PropertyTags.PR_REPLY_RECIPIENT_NAMES_W, string.Join(";", replyToRecipients), PropertyFlags.PROPATTR_READABLE);
         }
     }
-<<<<<<< HEAD
-}
-=======
     #endregion
 
     #region Save
@@ -917,4 +606,3 @@ public class Email : Message, IDisposable
     }
     #endregion
 }
->>>>>>> master

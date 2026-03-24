@@ -3,7 +3,7 @@
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
-// Copyright (c) 2015-2023 Magic-Sessions. (www.magic-sessions.com)
+// Copyright (c) 2013-2026 Kees van Spelde. (www.magic-sessions.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -5362,7 +5362,7 @@ public class NamedPropertyTag
     /// <param name="name">The name of the property</param>
     /// <param name="guid">The property <see cref="Guid" /></param>
     /// <param name="type">The <see cref="PropertyType" /></param>
-    internal NamedPropertyTag(ushort id, string name, Guid guid, PropertyType type)
+    public NamedPropertyTag(ushort id, string name, Guid guid, PropertyType type)
     {
         Id = id;
         Name = name;

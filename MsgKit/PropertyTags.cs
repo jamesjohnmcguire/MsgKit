@@ -1,4 +1,4 @@
-﻿// ReSharper disable CommentTypo
+// ReSharper disable CommentTypo
 //
 // PropertyTags.cs
 //

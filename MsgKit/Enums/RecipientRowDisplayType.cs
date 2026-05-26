@@ -1,4 +1,4 @@
-﻿//
+//
 // RecipientRowAddressType.cs
 //
 // Author: RecipientRowDisplayType and associated documentation files (the "Software"), to deal

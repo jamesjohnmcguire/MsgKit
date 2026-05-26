@@ -1,4 +1,4 @@
-﻿//
+//
 // NamedProperty.cs
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com> and Travis Semple

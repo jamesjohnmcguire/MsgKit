@@ -1,4 +1,4 @@
-﻿using OpenMcdf;
+using OpenMcdf;
 
 namespace MsgKit.Helpers;
 

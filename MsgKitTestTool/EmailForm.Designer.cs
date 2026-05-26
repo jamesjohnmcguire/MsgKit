@@ -1,4 +1,4 @@
-﻿namespace MsgKitTestTool
+namespace MsgKitTestTool
 {
     partial class MainForm
     {
